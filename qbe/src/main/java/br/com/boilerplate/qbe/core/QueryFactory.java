@@ -17,6 +17,8 @@ class QueryFactory {
 	protected final HashMap<Object, String> aliasMap;
 	protected Exemplo ex;
 	private String queryLayer;
+	private int paramNum;
+	private static final String PARAMETER_NAME_PREFIX = "param";
 	
 	protected QueryFactory(Exemplo ex) {
 		super();
@@ -50,6 +52,7 @@ class QueryFactory {
 			if (fieldValue == null || (fieldValue instanceof Collection<?> && ((Collection<?>)fieldValue).isEmpty()))
 				continue;
 			
+			
 			OperationType operationType = null;
 			if(f.getType().isPrimitive()) {
 				operationType = OperationType.EQUAL;
@@ -57,15 +60,21 @@ class QueryFactory {
 				operationType = decideOperation(fieldValue);
 			}
 			
-			if(operationType == OperationType.LIKE || operationType == OperationType.EQUAL) {
+			if(operationType == OperationType.LIKE || operationType == OperationType.EQUAL || operationType == OperationType.IN) {
 				restrict(bean, fieldValue, f.getName(), operationType);
 			} else {
 				join(f, fieldValue, bean);
 				layerDown(f.getName());
 				iterateOverClass(fieldValue.getClass(), fieldValue);
 				layerUp();
-			}
+			} 
 		}
+	}
+	
+	private String getNextParamName() {
+		String name = PARAMETER_NAME_PREFIX + paramNum;
+		paramNum++;
+		return name;
 	}
 
 	private void restrict(Object bean, Object fieldValue, String fieldName, OperationType operationType) {
@@ -81,13 +90,22 @@ class QueryFactory {
 			whereBuilder.append(") like "); 
 			String likeString = createLikeString(mode, value);
 			whereBuilder.append(likeString);
-		} else {
+		} else if(operationType == OperationType.EQUAL){
 			restrictFieldName(bean, fieldName);
 			whereBuilder.append(" = ");
 			whereBuilder.append(fieldValue);
+		} else {
+			Collection<?> collection = (Collection<?>) fieldValue;
+			restrictFieldName(bean, fieldName);
+
+			String paramName = getNextParamName();
+			whereBuilder.append(" in (:");
+			whereBuilder.append(paramName);
+			whereBuilder.append(") ");
+			ex.params.put(paramName, collection);
 		}
 	}
-
+	
 	private void restrictFieldName(Object bean, String fieldName) {
 		whereBuilder.append(aliasMap.get(bean));
 		whereBuilder.append('.');
@@ -141,12 +159,14 @@ class QueryFactory {
 	}
 	
 	private OperationType decideOperation(Object bean) {
+		if(bean instanceof Collection<?>)
+			return OperationType.IN;
 		if (bean instanceof Number) 
 			return OperationType.EQUAL;
 		if (bean instanceof Boolean) 
 			return OperationType.EQUAL;
 		if (bean instanceof Enum)
-			return OperationType.EQUAL;
+			return OperationType.LIKE;
 		if (bean instanceof String) 
 			return OperationType.LIKE;
 		if (bean instanceof Character)

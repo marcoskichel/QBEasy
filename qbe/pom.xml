@@ -2,9 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.boilerplatecorp</groupId>
   <artifactId>qbe</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
   <name>QBE</name>
-  <description>Query By Example frameworkl</description>
+  <description>Query By Example framework</description>
   
   <dependencies>
 	<dependency>
@@ -24,4 +24,7 @@
     <hibernate-entitymanager.version>4.3.6.Final</hibernate-entitymanager.version>
   </properties>
   
+  <scm>
+  	<url>https://marcoskichel@bitbucket.org/boilerplatecorp/qbe.git</url>
+  </scm>
 </project>

@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbe.util.ReflectionUtil;
@@ -16,6 +17,7 @@ public class Exemplo {
 	final HashMap<String, MatchingMode> matching4Field;
 	final HashMap<String, Boolean> ignoreCase4Field;
 	final Field[] fields;
+	Map<String, Object> params;
 	MatchingMode generalMatchingMode;
 	boolean generalIgnoreCase;
 	String layer;
@@ -29,6 +31,7 @@ public class Exemplo {
 		this.generalIgnoreCase = true; 
 		this.filter = filter;
 		this.fields = ReflectionUtil.getAllFields(filter.getClass());
+		this.params = new HashMap<String, Object>();
 		layer = "";
 	}
 	
