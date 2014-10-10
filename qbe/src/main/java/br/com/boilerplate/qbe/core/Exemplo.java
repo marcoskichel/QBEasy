@@ -8,12 +8,13 @@ import java.util.HashSet;
 import java.util.Map;
 
 import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
+import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
 import br.com.boilerplate.qbe.util.ReflectionUtil;
 
 public class Exemplo {
 	
 	final HashSet<String> excludeFields;
-	final Object filter;
+	final IdentifiableBySerial filter;
 	final HashMap<String, MatchingMode> matching4Field;
 	final HashMap<String, Boolean> ignoreCase4Field;
 	final Field[] fields;
@@ -22,7 +23,7 @@ public class Exemplo {
 	boolean generalIgnoreCase;
 	String layer;
 	
-	public Exemplo(Object filter) {
+	public Exemplo(IdentifiableBySerial filter) {
 		super();
 		this.excludeFields = new HashSet<String>();
 		this.matching4Field = new HashMap<String, MatchingMode>();
@@ -52,7 +53,7 @@ public class Exemplo {
 	}
 	
 	/**
-	 * Exclude all the null and emtpy fields
+	 * Exclude all the null and empty fields
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException

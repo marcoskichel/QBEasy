@@ -5,9 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.swing.plaf.basic.BasicBorders.FieldBorder;
+
 import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbe.model.enumerated.OperationType;
 import br.com.boilerplate.qbe.model.interfaces.ExcludeFromQBE;
+import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
 import br.com.boilerplate.qbe.util.ReflectionUtil;
 
 class QueryFactory {
@@ -88,7 +91,13 @@ class QueryFactory {
 			whereBuilder.append("lower(");
 			restrictFieldName(bean, fieldName);
 			whereBuilder.append(") like "); 
-			String likeString = createLikeString(mode, value);
+			
+			String likeString;
+			if(fieldValue instanceof Enum)
+				likeString = value;
+			else 
+				likeString = createLikeString(mode, value);
+			
 			whereBuilder.append(likeString);
 		} else if(operationType == OperationType.EQUAL){
 			restrictFieldName(bean, fieldName);
@@ -159,6 +168,8 @@ class QueryFactory {
 	}
 	
 	private OperationType decideOperation(Object bean) {
+		if(bean instanceof IdentifiableBySerial)
+			return OperationType.JOIN;
 		if(bean instanceof Collection<?>)
 			return OperationType.IN;
 		if (bean instanceof Number) 

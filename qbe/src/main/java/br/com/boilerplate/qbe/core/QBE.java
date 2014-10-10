@@ -1,7 +1,6 @@
 package br.com.boilerplate.qbe.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+
+import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
 
 public class QBE {
 	private EntityManager em;
@@ -51,19 +52,10 @@ public class QBE {
 	}
 	
 	protected static boolean isInnerPojo(Object bean) {
-		if (bean instanceof Number) 
+		if(bean instanceof IdentifiableBySerial) 
+			return true;
+		else 
 			return false;
-		if (bean instanceof Boolean) 
-			return false;
-		if (bean instanceof Enum)
-			return false;
-		if (bean instanceof String) 
-			return false;
-		if (bean instanceof Character)
-			return false;
-		if (bean instanceof Date) 
-			return false;
-		return true;
 	}
 	
 	private void setParameters(Query q, Map<String, Object> params) {
