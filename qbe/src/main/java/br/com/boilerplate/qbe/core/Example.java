@@ -11,7 +11,7 @@ import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
 import br.com.boilerplate.qbe.util.ReflectionUtil;
 
-public class Exemplo {
+public class Example {
 	
 	final HashSet<String> excludeFields;
 	final IdentifiableBySerial filter;
@@ -23,7 +23,7 @@ public class Exemplo {
 	boolean generalIgnoreCase;
 	String layer;
 	
-	public Exemplo(IdentifiableBySerial filter) {
+	public Example(IdentifiableBySerial filter) {
 		super();
 		this.excludeFields = new HashSet<String>();
 		this.matching4Field = new HashMap<String, MatchingMode>();

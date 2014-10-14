@@ -28,7 +28,7 @@ public class QBE {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getList(Exemplo exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public <T> List<T> getList(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		String queryString = generateQueryStringFromNewFactoryInstance(exemplo);
 		Query q = em.createQuery(queryString);
 		setParameters(q, exemplo.params);
@@ -36,7 +36,7 @@ public class QBE {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getSingle(Exemplo exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NonUniqueResultException, NoResultException {
+	public <T> T getSingle(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NonUniqueResultException, NoResultException {
 		String queryString = generateQueryStringFromNewFactoryInstance(exemplo);
 		Query q = em.createQuery(queryString);
 		setParameters(q, exemplo.params);
@@ -44,11 +44,20 @@ public class QBE {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getList(Exemplo exemplo, Integer rowsPerPage) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public <T> List<T> getPaginatedList(Example exemplo, Integer first, Integer rowsPerPage, String sortOrder, String sortFieldName) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		qf = new QueryFactory(exemplo);
-		Query q = em.createQuery(qf.buildQueryString());
+		Query q = em.createQuery(qf.getPaginatedQueryString(sortOrder, sortFieldName));
+		q.setFirstResult(first);
+		q.setMaxResults(rowsPerPage);
 		setParameters(q, exemplo.params);
 		return q.getResultList();
+	}
+	
+	public Long total(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		qf = new QueryFactory(exemplo);
+		Query q = em.createQuery(qf.getCountString());
+		setParameters(q, exemplo.params);
+		return (Long) q.getSingleResult();
 	}
 	
 	protected static boolean isInnerPojo(Object bean) {
@@ -64,9 +73,9 @@ public class QBE {
 		}
 	}
 	
-	private String generateQueryStringFromNewFactoryInstance(Exemplo exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private String generateQueryStringFromNewFactoryInstance(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		QueryFactory factoryInstance = new QueryFactory(exemplo);
-		String queryString = factoryInstance.buildQueryString();
+		String queryString = factoryInstance.getQueryString();
 		return queryString;
 	}
 }

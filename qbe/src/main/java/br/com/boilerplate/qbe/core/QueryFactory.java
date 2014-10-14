@@ -5,8 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 
-import javax.swing.plaf.basic.BasicBorders.FieldBorder;
-
 import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbe.model.enumerated.OperationType;
 import br.com.boilerplate.qbe.model.interfaces.ExcludeFromQBE;
@@ -18,28 +16,45 @@ class QueryFactory {
 	protected StringBuilder fromBuilder;
 	protected StringBuilder whereBuilder;
 	protected final HashMap<Object, String> aliasMap;
-	protected Exemplo ex;
+	protected Example ex;
 	private String queryLayer;
 	private int paramNum;
+	private boolean countQuery;
 	private static final String PARAMETER_NAME_PREFIX = "param";
 	
-	protected QueryFactory(Exemplo ex) {
+	protected QueryFactory(Example ex) {
 		super();
 		this.ex = ex;
 		aliasMap = new HashMap<Object, String>();
 	}
-
-	private void resetFactory() {
-		selectBuilder = new StringBuilder("select ");
-		fromBuilder = new StringBuilder(" from ");
-		whereBuilder = new StringBuilder(" where 1=1 ");
+	
+	protected String getQueryString() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		countQuery = false;
+		return build();
 	}
 	
-	protected String buildQueryString() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		resetFactory();
+	protected String getPaginatedQueryString(String order, String orderFieldName) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		countQuery = false;
+		String orderby = " order by " + aliasMap.get(ex.filter) + '.' + orderFieldName + " " + order;
+		return build() + orderby;
+	}
+	
+	protected String getCountString() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		countQuery = true;
+		return build();
+	}
+
+	private String build() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		resetBuilders();
 		initialize(ex);
 		iterateOverClass(ex.filter.getClass(), ex.filter);
 		return selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString();
+	}
+	
+	private void resetBuilders() {
+		selectBuilder = new StringBuilder("select ");
+		fromBuilder = new StringBuilder(" from ");
+		whereBuilder = new StringBuilder(" where 1=1 ");
 	}
 
 	private void iterateOverClass(Class<?> clazz, Object bean) throws IllegalAccessException,InvocationTargetException, NoSuchMethodException {
@@ -87,13 +102,13 @@ class QueryFactory {
 			Boolean ignoreCase = ex.ignoreCase4Field.containsKey(fieldName) ? ex.ignoreCase4Field.get(fieldName) : ex.generalIgnoreCase;
 			MatchingMode mode = ex.matching4Field.containsKey(fieldName) ? ex.matching4Field.get(fieldName) : ex.generalMatchingMode;
 			String value = ignoreCase ? fieldValue.toString().toLowerCase() : fieldValue.toString();
-		
+			
 			whereBuilder.append("lower(");
 			restrictFieldName(bean, fieldName);
 			whereBuilder.append(") like "); 
 			
 			String likeString;
-			if(fieldValue instanceof Enum)
+			if(fieldValue instanceof Enum && value.substring(0, 1).equals("'") && value.substring(value.length()-1).equals("'"))
 				likeString = value;
 			else 
 				likeString = createLikeString(mode, value);
@@ -156,14 +171,16 @@ class QueryFactory {
 			return "'" + value + "'";
 	}
 	
-	private void initialize(Exemplo ex) {
+	private void initialize(Example ex) {
 		String clazzName = ex.filter.getClass().getSimpleName();
 		String alias =  clazzName.toLowerCase();
 		
 		aliasMap.put(ex.filter, alias);
-		
 		fromBuilder.append(clazzName + " " + alias);
-		selectBuilder.append(alias);
+
+		String appendValue = countQuery ? ("count(" + alias + ')'): alias;
+		selectBuilder.append(appendValue);
+		
 		queryLayer = ""; 
 	}
 	
@@ -205,11 +222,11 @@ class QueryFactory {
 		queryLayer = queryLayer.isEmpty() ? queryLayer + layerName : queryLayer + '.' + layerName;
 	}
 
-	public Exemplo getEx() {
+	public Example getEx() {
 		return ex;
 	}
 
-	public void setEx(Exemplo ex) {
+	public void setEx(Example ex) {
 		this.ex = ex;
 	}
 }
