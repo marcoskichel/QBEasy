@@ -12,6 +12,7 @@ import br.com.boilerplate.qbe.core.Example;
 import br.com.boilerplate.qbe.core.QBE;
 import br.com.boilerplate.qbe.model.interfaces.ExampleGenerator;
 import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
+import br.com.boilerplate.qbe.test.model.Usuario;
 
 public class GenericLazyList<T extends IdentifiableBySerial> extends LazyDataModel<T> {
 	private static final long serialVersionUID = 1L;
@@ -21,7 +22,6 @@ public class GenericLazyList<T extends IdentifiableBySerial> extends LazyDataMod
     protected T pesquisa;
     private Example exemplo;
     
-
     public GenericLazyList(EntityManager entityManager, ExampleGenerator generator, T pesquisa) {
         this.entityManager = entityManager;
     	this.pesquisa = pesquisa;

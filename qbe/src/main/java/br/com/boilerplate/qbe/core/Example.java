@@ -23,6 +23,7 @@ public class Example {
 	boolean generalIgnoreCase;
 	String layer;
 	
+	
 	public Example(IdentifiableBySerial filter) {
 		super();
 		this.excludeFields = new HashSet<String>();

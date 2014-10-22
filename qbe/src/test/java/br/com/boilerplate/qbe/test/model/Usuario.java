@@ -10,9 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
+
 @Entity
 @Table(name="usuario")
-public class Usuario {
+public class Usuario implements IdentifiableBySerial{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

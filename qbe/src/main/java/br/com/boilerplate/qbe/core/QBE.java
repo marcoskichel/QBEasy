@@ -13,7 +13,7 @@ import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
 
 public class QBE {
 	private EntityManager em;
-	private QueryFactory qf;
+	private QueryStringBuilder qf;
 	private static QBE instance;
 	
 	private QBE(EntityManager em) {
@@ -45,7 +45,7 @@ public class QBE {
 	
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getPaginatedList(Example exemplo, Integer first, Integer rowsPerPage, String sortOrder, String sortFieldName) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		qf = new QueryFactory(exemplo);
+		qf = new QueryStringBuilder(exemplo);
 		Query q = em.createQuery(qf.getPaginatedQueryString(sortOrder, sortFieldName));
 		q.setFirstResult(first);
 		q.setMaxResults(rowsPerPage);
@@ -54,7 +54,7 @@ public class QBE {
 	}
 	
 	public Long total(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		qf = new QueryFactory(exemplo);
+		qf = new QueryStringBuilder(exemplo);
 		Query q = em.createQuery(qf.getCountString());
 		setParameters(q, exemplo.params);
 		return (Long) q.getSingleResult();
@@ -74,7 +74,7 @@ public class QBE {
 	}
 	
 	private String generateQueryStringFromNewFactoryInstance(Example exemplo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		QueryFactory factoryInstance = new QueryFactory(exemplo);
+		QueryStringBuilder factoryInstance = new QueryStringBuilder(exemplo);
 		String queryString = factoryInstance.getQueryString();
 		return queryString;
 	}
