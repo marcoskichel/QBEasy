@@ -1,14 +1,26 @@
-package br.com.boilerplate.qbe.model.interfaces;
+package br.com.boilerplate.qbeasy.model.interfaces;
 
-import br.com.boilerplate.qbe.core.Example;
-import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
-import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
+import java.lang.reflect.InvocationTargetException;
+
+import br.com.boilerplate.qbeasy.core.Example;
+import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
+import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
 
 public abstract class ExampleGenerator {
+	
+	/**
+	 * Generates examples ignoring empty Strings, with ignore case triggered and using 
+	 * MatchMode.Anywhere
+	 */
 	public static final ExampleGenerator DEFAULT_GENERATOR = new ExampleGenerator() {
 		@Override
-		public Example generate(IdentifiableBySerial filter) {
-			return new Example(filter);
+		public Example generate(IdentifiableBySerial filter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			Example e = new Example(filter);
+			e.setPrintHql(true);
+			e.ignoreCase(true);
+			e.setMatchingMode(MatchingMode.ANYWHERE);
+			e.excludeZeroes();
+			return e;
 		}
 	};
 	
@@ -23,13 +35,9 @@ public abstract class ExampleGenerator {
 	
 	public static final ExampleGenerator NO_ZEROES_GENERATOR = new ExampleGenerator() {
 		@Override
-		public Example generate(IdentifiableBySerial filter) {
+		public Example generate(IdentifiableBySerial filter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 			Example example = new Example(filter);
-			try {
-				example.excludeZeroes();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			example.excludeZeroes();
 			return example;
 		}
 	};
@@ -47,5 +55,5 @@ public abstract class ExampleGenerator {
 			return example;
 		}
 	};
-	public abstract Example generate(IdentifiableBySerial filter);
+	public abstract Example generate(IdentifiableBySerial filter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 }
