@@ -53,7 +53,10 @@ class QueryStringBuilder {
 		resetBuilders();
 		initialize(ex);
 		iterateOverClass(ex.filter.getClass(), ex.filter);
-		return selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString();
+		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString();
+		if(ex.printHql) 
+			System.out.println(queryString);
+		return queryString;
 	}
 	
 	private void resetBuilders() {

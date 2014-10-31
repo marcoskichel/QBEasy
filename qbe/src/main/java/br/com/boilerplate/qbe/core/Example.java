@@ -22,6 +22,7 @@ public class Example {
 	MatchingMode generalMatchingMode;
 	boolean generalIgnoreCase;
 	String layer;
+	boolean printHql;
 	
 	
 	public Example(IdentifiableBySerial filter) {
@@ -120,5 +121,9 @@ public class Example {
 	
 	private void layerDown(String layerName) {
 		layer = layer.isEmpty() ? layer + layerName : layer + '.' + layerName;
+	}
+
+	public void setPrintHql(boolean printHql) {
+		this.printHql = printHql;
 	}
 }

@@ -12,7 +12,6 @@ import br.com.boilerplate.qbe.core.Example;
 import br.com.boilerplate.qbe.core.QBE;
 import br.com.boilerplate.qbe.model.interfaces.ExampleGenerator;
 import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
-import br.com.boilerplate.qbe.test.model.Usuario;
 
 public class GenericLazyList<T extends IdentifiableBySerial> extends LazyDataModel<T> {
 	private static final long serialVersionUID = 1L;
