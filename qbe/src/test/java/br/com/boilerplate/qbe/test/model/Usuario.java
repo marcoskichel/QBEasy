@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
+import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
 
 @Entity
 @Table(name="usuario")

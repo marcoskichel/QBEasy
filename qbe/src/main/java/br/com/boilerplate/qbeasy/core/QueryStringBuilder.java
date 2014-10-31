@@ -1,15 +1,15 @@
-package br.com.boilerplate.qbe.core;
+package br.com.boilerplate.qbeasy.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
 
-import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
-import br.com.boilerplate.qbe.model.enumerated.OperationType;
-import br.com.boilerplate.qbe.model.interfaces.ExcludeFromQBE;
-import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
-import br.com.boilerplate.qbe.util.ReflectionUtil;
+import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
+import br.com.boilerplate.qbeasy.model.enumerated.OperationType;
+import br.com.boilerplate.qbeasy.model.interfaces.ExcludeFromQBE;
+import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
+import br.com.boilerplate.qbeasy.util.ReflectionUtil;
 
 /**
  * Responsable for build hql Strings 

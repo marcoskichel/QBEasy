@@ -1,4 +1,4 @@
-package br.com.boilerplate.qbe.core;
+package br.com.boilerplate.qbeasy.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import br.com.boilerplate.qbe.model.enumerated.MatchingMode;
-import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
-import br.com.boilerplate.qbe.util.ReflectionUtil;
+import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
+import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
+import br.com.boilerplate.qbeasy.util.ReflectionUtil;
 
 public class Example {
 	
@@ -74,7 +74,7 @@ public class Example {
 				continue;
 			}
 			
-			if(QBE.isInnerPojo(value)) {
+			if(QBEasy.isInnerIdentifiableBySerial(value)) {
 				layerDown(f.getName());
 				excludeZeroes(ReflectionUtil.getAllFields(value.getClass()), value);
 				layerUp();

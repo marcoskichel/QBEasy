@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.boilerplatecorp</groupId>
-  <artifactId>qbe</artifactId>
-  <version>2.1.1</version>
+  <artifactId>qbeasy</artifactId>
+  <version>2.5-SNAPSHOT</version>
   <name>QBEasy</name>
   <description>Uncomplicated Query By Example Framework</description>
   
@@ -46,6 +46,6 @@
   </properties>
   
   <scm>
-  	<url>https://marcoskichel@bitbucket.org/boilerplatecorp/qbe.git</url>
+  	<url>https://marcoskichel@bitbucket.org/boilerplatecorp/qbeasy.git</url>
   </scm>
 </project>

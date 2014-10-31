@@ -1,4 +1,4 @@
-package br.com.boilerplate.qbe.util;
+package br.com.boilerplate.qbeasy.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

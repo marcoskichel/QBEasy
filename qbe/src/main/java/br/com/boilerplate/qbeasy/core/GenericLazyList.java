@@ -1,4 +1,4 @@
-package br.com.boilerplate.qbe.core;
+package br.com.boilerplate.qbeasy.core;
 
 import java.util.List;
 import java.util.Map;
@@ -8,10 +8,10 @@ import javax.persistence.EntityManager;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-import br.com.boilerplate.qbe.core.Example;
-import br.com.boilerplate.qbe.core.QBE;
-import br.com.boilerplate.qbe.model.interfaces.ExampleGenerator;
-import br.com.boilerplate.qbe.model.interfaces.IdentifiableBySerial;
+import br.com.boilerplate.qbeasy.core.Example;
+import br.com.boilerplate.qbeasy.core.QBEasy;
+import br.com.boilerplate.qbeasy.model.interfaces.ExampleGenerator;
+import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
 
 public class GenericLazyList<T extends IdentifiableBySerial> extends LazyDataModel<T> {
 	private static final long serialVersionUID = 1L;
@@ -22,23 +22,27 @@ public class GenericLazyList<T extends IdentifiableBySerial> extends LazyDataMod
     private Example exemplo;
     
     public GenericLazyList(EntityManager entityManager, ExampleGenerator generator, T pesquisa) {
-        this.entityManager = entityManager;
-    	this.pesquisa = pesquisa;
-        exemplo = generator.generate(pesquisa);
+    	try {
+    		this.entityManager = entityManager;
+    		this.pesquisa = pesquisa;
+    		exemplo = generator.generate(pesquisa);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public List<T> load(int first, int pageSize, String sortField,  SortOrder sortOrder, Map<String, String> filters) {
     	try {
 	        if (getRowCount() <= 0) {
-	        	Long rowCount = QBE.using(entityManager).total(exemplo);
+	        	Long rowCount = QBEasy.managedBy(entityManager).total(exemplo);
 	        	int rowCountIntValue = Integer.valueOf(rowCount+"");
 	            setRowCount(rowCountIntValue);
 	            first = 0;
 	        }
 	        
 	        String ordenacao = ordenarASCouDESC(sortOrder);
-	        lista = QBE.using(entityManager).getPaginatedList(exemplo, first, pageSize, ordenacao, sortField);
+	        lista = QBEasy.managedBy(entityManager).getPaginatedList(exemplo, first, pageSize, ordenacao, sortField);
 	
 	        setPageSize(pageSize);
 	        return lista;
