@@ -1,4 +1,4 @@
-package br.com.boilerplate.qbe.test.core;
+package br.com.boilerplate.qbeasy.test.core;
 
 public class GenericLazyListTest {
 	private final static String SELECT_USUARIO_PART_ONE = 

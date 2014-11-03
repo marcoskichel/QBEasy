@@ -2,10 +2,15 @@ package br.com.boilerplate.qbeasy.core;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
@@ -17,7 +22,7 @@ public class Example {
 	final IdentifiableBySerial filter;
 	final HashMap<String, MatchingMode> matching4Field;
 	final HashMap<String, Boolean> ignoreCase4Field;
-	final Field[] fields;
+	final List<Field> fields;
 	Map<String, Object> params;
 	MatchingMode generalMatchingMode;
 	boolean generalIgnoreCase;
@@ -25,7 +30,7 @@ public class Example {
 	boolean printHql;
 	
 	
-	public Example(IdentifiableBySerial filter) {
+	public Example(IdentifiableBySerial filter) throws IllegalArgumentException, IllegalAccessException {
 		super();
 		this.excludeFields = new HashSet<String>();
 		this.matching4Field = new HashMap<String, MatchingMode>();
@@ -36,8 +41,33 @@ public class Example {
 		this.fields = ReflectionUtil.getAllFields(filter.getClass());
 		this.params = new HashMap<String, Object>();
 		layer = "";
+		
+		if (filter.getClass().isAnnotationPresent(Entity.class))
+			excludeInvalidFields(filter);
 	}
-	
+
+	private void excludeInvalidFields(IdentifiableBySerial bean) throws IllegalArgumentException, IllegalAccessException {
+		Object value = null;
+		List<Field> beanFields = ReflectionUtil.getAllFields(bean.getClass());
+		for (Field f : beanFields) {
+			value = ReflectionUtil.getValue(f, bean);
+			
+			if(value == null || f.isAnnotationPresent(Transient.class) || Modifier.isStatic(f.getModifiers())
+					|| value instanceof Collection<?> && ((Collection<?>)value).isEmpty()) {
+				prepareAndExclude(f);
+				continue;
+			}
+			
+			if(QBEasy.isInnerIdentifiableBySerial(value)) {
+				IdentifiableBySerial ibs = (IdentifiableBySerial) value;
+				layerDown(f.getName());
+				if (filter.getClass().isAnnotationPresent(Entity.class))
+					excludeInvalidFields(ibs);
+				layerUp();
+			}
+		}
+	}
+
 	/**
 	 * Define a matching mode for an specific field
 	 * @param fieldName
@@ -64,35 +94,39 @@ public class Example {
 		excludeZeroes(fields, filter);
 	}
 	
-	private void excludeZeroes(Field[] fields, Object bean) throws IllegalArgumentException, IllegalAccessException {
+	private void excludeZeroes(List<Field> fields, Object bean) throws IllegalArgumentException, IllegalAccessException {
 		Object value = null;
 		for (Field f : fields) {
+			if(isExcluded(f))
+				continue;
+			
 			value = ReflectionUtil.getValue(f, bean);
 			
-			if(value == null || value instanceof Collection<?> && ((Collection<?>)value).isEmpty()) {
-				excludeZero(f);
-				continue;
-			}
-			
 			if(QBEasy.isInnerIdentifiableBySerial(value)) {
+				IdentifiableBySerial ibs = (IdentifiableBySerial) value;
 				layerDown(f.getName());
-				excludeZeroes(ReflectionUtil.getAllFields(value.getClass()), value);
+				excludeZeroes(ReflectionUtil.getAllFields(ibs.getClass()), ibs);
 				layerUp();
 				continue;
 			}
 			
 			if(value.toString().isEmpty()) {
-				excludeZero(f);
+				prepareAndExclude(f);
 			}
 		}
 	}
-	
-	private void excludeZero(Field f) {
+
+	private boolean isExcluded(Field f) {
 		String excludeName = layer.isEmpty() ? f.getName() : layer + '.' + f.getName();
-		excludeField(excludeName);
+		return excludeFields.contains(excludeName);
 	}
 
-	public void excludeField(String fieldName) {
+	private void prepareAndExclude(Field f) {
+		String excludeName = layer.isEmpty() ? f.getName() : layer + '.' + f.getName();
+		excludeFieldByName(excludeName);
+	}
+	
+	public void excludeFieldByName(String fieldName) {
 		excludeFields.add(fieldName);
 	}
 	

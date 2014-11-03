@@ -1,4 +1,4 @@
-package br.com.boilerplate.qbe.test.model;
+package br.com.boilerplate.qbeasy.test.model;
 
 import java.util.List;
 

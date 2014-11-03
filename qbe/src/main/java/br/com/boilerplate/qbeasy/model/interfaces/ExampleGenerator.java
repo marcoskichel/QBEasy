@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import br.com.boilerplate.qbeasy.core.Example;
 import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
-import br.com.boilerplate.qbeasy.model.interfaces.IdentifiableBySerial;
 
 public abstract class ExampleGenerator {
 	
@@ -27,9 +26,13 @@ public abstract class ExampleGenerator {
 	public static final ExampleGenerator ANYWHERE_MATCHING_GENERATOR = new ExampleGenerator() {
 		@Override
 		public Example generate(IdentifiableBySerial filter) {
-			Example example = new Example(filter);
-			example.setMatchingMode(MatchingMode.ANYWHERE);
-			return example;
+			try {
+				Example example = new Example(filter);
+				example.setMatchingMode(MatchingMode.ANYWHERE);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 	};
 	
@@ -45,14 +48,14 @@ public abstract class ExampleGenerator {
 	public static final ExampleGenerator ANYWHERE_MATCHING_MODE_WITH_NO_ZEROES_GENERATOR = new ExampleGenerator() {
 		@Override
 		public Example generate(IdentifiableBySerial filter) {
-			Example example = new Example(filter);
 			try {
+				Example example = new Example(filter);
 				example.setMatchingMode(MatchingMode.ANYWHERE);
 				example.excludeZeroes();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return example;
+			return null;
 		}
 	};
 	public abstract Example generate(IdentifiableBySerial filter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;

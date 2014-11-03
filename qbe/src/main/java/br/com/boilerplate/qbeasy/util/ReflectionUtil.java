@@ -9,10 +9,23 @@ import java.util.Set;
 
 public class ReflectionUtil {
 
-	public static Field[] getAllFields(Class<?> clazz) {
+//	public static List<Field> getAllJpaMappedFields(Class<? extends IdentifiableBySerial> clazz) {
+//		List<Field> fields =  new ArrayList<Field>();
+//		fields.addAll(Arrays.asList(getAllFields(clazz)));
+//		
+//		List<Field> notJpaMapped = new ArrayList<Field>();
+//		for (Field f : fields) 
+//			if()
+//				notJpaMapped.add(f);
+//		
+//		fields.removeAll(notJpaMapped);
+//		return fields;
+//	}
+	
+	public static List<Field> getAllFields(Class<?> clazz) {
 		List<Class<?>> classes = getAllSuperclasses(clazz);
 		classes.add(clazz);
-		return getAllFields(classes);
+		return Arrays.asList(getAllFields(classes));
 	}
 
 	/**

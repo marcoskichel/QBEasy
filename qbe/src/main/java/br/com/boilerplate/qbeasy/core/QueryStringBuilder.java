@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import br.com.boilerplate.qbeasy.model.enumerated.MatchingMode;
 import br.com.boilerplate.qbeasy.model.enumerated.OperationType;
@@ -66,7 +67,7 @@ class QueryStringBuilder {
 	}
 
 	private void iterateOverClass(Class<?> clazz, Object bean) throws IllegalAccessException,InvocationTargetException, NoSuchMethodException {
-		Field[] fields = ReflectionUtil.getAllFields(clazz);
+		List<Field> fields = ReflectionUtil.getAllFields(clazz);
 		for (Field f : fields) {
 			if(isExcludedByUser(f)) 
 				continue;
@@ -130,7 +131,7 @@ class QueryStringBuilder {
 	
 		return OperationType.JOIN;
 	}
-
+	
 	private boolean isNullOrEmpty(Object fieldValue) throws IllegalAccessException {
 		if (fieldValue == null || (fieldValue instanceof Collection<?> && ((Collection<?>)fieldValue).isEmpty()))
 			return true;
