@@ -29,7 +29,6 @@ public class Example {
 	String layer;
 	boolean printHql;
 	
-	
 	public Example(IdentifiableBySerial filter) throws IllegalArgumentException, IllegalAccessException {
 		super();
 		this.excludeFields = new HashSet<String>();
