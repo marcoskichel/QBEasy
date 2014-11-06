@@ -26,13 +26,14 @@ public abstract class ExampleGenerator {
 	public static final ExampleGenerator ANYWHERE_MATCHING_GENERATOR = new ExampleGenerator() {
 		@Override
 		public Example generate(IdentifiableBySerial filter) {
+			Example example = null;
 			try {
-				Example example = new Example(filter);
+				example = new Example(filter);
 				example.setMatchingMode(MatchingMode.ANYWHERE);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return null;
+			return example;
 		}
 	};
 	
@@ -48,14 +49,15 @@ public abstract class ExampleGenerator {
 	public static final ExampleGenerator ANYWHERE_MATCHING_MODE_WITH_NO_ZEROES_GENERATOR = new ExampleGenerator() {
 		@Override
 		public Example generate(IdentifiableBySerial filter) {
+			Example example = null;
 			try {
-				Example example = new Example(filter);
+				example = new Example(filter);
 				example.setMatchingMode(MatchingMode.ANYWHERE);
 				example.excludeZeroes();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return null;
+			return example;
 		}
 	};
 	public abstract Example generate(IdentifiableBySerial filter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
