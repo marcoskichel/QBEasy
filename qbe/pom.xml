@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.boilerplatecorp</groupId>
 	<artifactId>qbeasy</artifactId>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.2-SNAPSHOT</version>
 	<name>QBEasy</name>
 	<description>Uncomplicated Query By Example Framework</description>
 
@@ -18,12 +18,6 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			<version>${org.hibernate.jpa.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
