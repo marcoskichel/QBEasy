@@ -227,7 +227,7 @@ public class QueryStringBuilder {
 		} else {
 			QueryField qf = QBEasy.getQueryFieldDefinition(fieldValue);
 			
-			if (!qf.after().isEmpty() || !qf.after().isEmpty()) {
+			if (qf != null && (!qf.after().isEmpty() || !qf.after().isEmpty())) {
 				return OperationType.AFTER_OR_AND_BEFORE;
 			}
 			
