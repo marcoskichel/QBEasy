@@ -1,10 +1,6 @@
 package br.com.mk.qbeasy.core;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class QBEasyTest {
 	

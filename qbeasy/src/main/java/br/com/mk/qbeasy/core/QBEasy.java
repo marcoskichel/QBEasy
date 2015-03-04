@@ -186,7 +186,7 @@ public class QBEasy {
 		return false;
 	}
 	
-	private static String generateQueryStringFromNewFactoryInstance(Example exemplo) throws QBEasyException {
+	public static String generateQueryStringFromNewFactoryInstance(Example exemplo) throws QBEasyException {
 		try {
 			QueryStringBuilder factoryInstance = new QueryStringBuilder(exemplo);
 			String queryString = factoryInstance.getQueryString();
