@@ -31,6 +31,7 @@ public class Example {
 	boolean generalIgnoreCase;
 	String layer;
 	boolean printHql;
+	String extraRestrictions;
 	
 	
 	public Example(Object filter) throws IllegalArgumentException, IllegalAccessException {
@@ -44,7 +45,9 @@ public class Example {
 		this.filter = filter;
 		this.fields = ReflectionUtil.getAllFields(filter.getClass());
 		this.params = new HashMap<String, Object>();
+		extraRestrictions = new String();
 		layer = "";
+		
 		
 		if (filter.getClass().isAnnotationPresent(Entity.class))
 			excludeInvalidFields(filter);
@@ -156,6 +159,10 @@ public class Example {
 			sb.deleteCharAt(sb.length()-1);
 			layer = sb.toString();
 		}
+	}
+	
+	public void addRestrictions(String restrictions) {
+		extraRestrictions = restrictions;
 	}
 	
 	private void layerDown(String layerName) {

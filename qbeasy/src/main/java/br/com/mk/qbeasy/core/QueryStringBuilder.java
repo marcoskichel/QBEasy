@@ -94,7 +94,7 @@ public class QueryStringBuilder {
 		initialize(ex);
 		iterateOverClass(ex.filter.getClass(), ex.filter);
 		
-		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString();
+		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString() + ex.extraRestrictions;
 		if(ex.printHql) 
 			System.out.println(queryString);
 		
