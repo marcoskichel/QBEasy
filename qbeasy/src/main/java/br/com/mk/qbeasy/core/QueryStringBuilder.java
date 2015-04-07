@@ -14,6 +14,8 @@ import br.com.mk.qbeasy.model.enumerated.JoinType;
 import br.com.mk.qbeasy.model.enumerated.MatchingMode;
 import br.com.mk.qbeasy.model.enumerated.OperationType;
 import br.com.mk.qbeasy.model.enumerated.QueryConjuction;
+import br.com.mk.qbeasy.model.exception.QBEasyException;
+import br.com.mk.qbeasy.model.interfaces.annotations.DefaultBooleanQueryValue;
 import br.com.mk.qbeasy.model.interfaces.annotations.Exclude;
 import br.com.mk.qbeasy.model.interfaces.annotations.PositionAtQuery;
 import br.com.mk.qbeasy.model.interfaces.annotations.QueryField;
@@ -34,6 +36,8 @@ public class QueryStringBuilder {
 	private int paramNum;
 	private boolean countQuery;
 	private static final String PARAMETER_NAME_PREFIX = "param";
+	
+	public static final String ENTITY_ALIAS = "entity_1";
 	
 	public QueryStringBuilder(Example ex) {
 		super();
@@ -91,8 +95,12 @@ public class QueryStringBuilder {
 	private String build() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		resetBuilders();
 		
-		initialize(ex);
-		iterateOverClass(ex.filter.getClass(), ex.filter);
+		try {
+			initialize(ex);
+			iterateOverClass(ex.filter.getClass(), ex.filter);
+		} catch (Exception e) {
+			throw new QBEasyException(e);
+		}
 		
 		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString() + ex.extraRestrictions;
 		if(ex.printHql) 
@@ -112,7 +120,7 @@ public class QueryStringBuilder {
 		whereBuilder = new StringBuilder(" where 1=1 ");
 	}
 
-	private void iterateOverClass(Class<?> clazz, Object bean) throws IllegalAccessException,InvocationTargetException, NoSuchMethodException {
+	private void iterateOverClass(Class<?> clazz, Object bean) throws IllegalAccessException,InvocationTargetException, NoSuchMethodException, InstantiationException {
 		List<Field> fields = ReflectionUtil.getAllFields(clazz);
 		fields = getOrdered(fields);
 		for (Field f : fields) {
@@ -122,8 +130,14 @@ public class QueryStringBuilder {
 			Object fieldValue = ReflectionUtil.getValue(f, bean);
 			QueryField queryFieldAnnotation = f.getAnnotation(QueryField.class);
 			
-			if ( (fieldValue == null && queryFieldAnnotation == null) || (fieldValue == null && !queryFieldAnnotation.isNullValid()) ) 
-				continue;
+			boolean defaultQueryValue = isDefaultQueryValue(f, fieldValue);
+			if (fieldValue == null) {
+				if (!defaultQueryValue && (queryFieldAnnotation == null || !queryFieldAnnotation.isNullValid()) ) {
+					continue;
+				}
+			}
+			if (defaultQueryValue) 
+				fieldValue = f.getAnnotation(DefaultBooleanQueryValue.class).value();
 			
 			OperationType operationType;
 			if (queryFieldAnnotation != null) {
@@ -135,6 +149,10 @@ public class QueryStringBuilder {
 			appendToQueryStringAccordingToOperationType(bean, fieldValue, f, operationType); 
 		}
 	}
+
+private boolean isDefaultQueryValue(Field f, Object fieldValue) {
+	return fieldValue == null && f.isAnnotationPresent(DefaultBooleanQueryValue.class);
+}
 
 	private List<Field> getOrdered(List<Field> fields) {
 		List<Field> ordered = new ArrayList<Field>();
@@ -186,9 +204,11 @@ public class QueryStringBuilder {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
+	 * @throws InstantiationException 
 	 */
+
 	private void appendToQueryStringAccordingToOperationType(Object bean, Object fieldValue, Field f, OperationType operationType) 
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 	
 		if(operationType == OperationType.LIKE 
 				|| operationType == OperationType.EQUAL 
@@ -219,7 +239,7 @@ public class QueryStringBuilder {
 		if (fieldValue instanceof Collection<?>) {
 			return OperationType.IN;
 		}
-		if (fieldValue instanceof Enum || fieldValue instanceof String) {
+		if (fieldValue instanceof String) {
 			return OperationType.LIKE;
 		}
 		if (QBEasy.isInnerEntity(fieldValue)) {
@@ -373,12 +393,11 @@ public class QueryStringBuilder {
 	
 	private void initialize(Example ex) {
 		String clazzName = ex.filter.getClass().getSimpleName();
-		String alias =  clazzName.toLowerCase();
 		
-		aliasMap.put(ex.filter, alias);
-		fromBuilder.append(clazzName + " " + alias);
+		aliasMap.put(ex.filter, ENTITY_ALIAS);
+		fromBuilder.append(clazzName + " " + ENTITY_ALIAS);
 
-		String appendValue = countQuery ? ("count(" + alias + ')'): alias;
+		String appendValue = countQuery ? ("count(" + ENTITY_ALIAS + ')'): ENTITY_ALIAS;
 		selectBuilder.append(appendValue);
 		
 		queryLayer = ""; 
