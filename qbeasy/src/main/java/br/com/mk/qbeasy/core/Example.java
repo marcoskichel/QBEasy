@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import br.com.mk.qbeasy.model.enumerated.JoinType;
 import br.com.mk.qbeasy.model.enumerated.MatchingMode;
+import br.com.mk.qbeasy.model.interfaces.annotations.DefaultBooleanQueryValue;
 import br.com.mk.qbeasy.model.interfaces.annotations.QueryField;
 import br.com.mk.qbeasy.util.ReflectionUtil;
 
@@ -31,6 +32,7 @@ public class Example {
 	boolean generalIgnoreCase;
 	String layer;
 	boolean printHql;
+	String extraRestrictions;
 	
 	
 	public Example(Object filter) throws IllegalArgumentException, IllegalAccessException {
@@ -44,7 +46,9 @@ public class Example {
 		this.filter = filter;
 		this.fields = ReflectionUtil.getAllFields(filter.getClass());
 		this.params = new HashMap<String, Object>();
+		extraRestrictions = new String();
 		layer = "";
+		
 		
 		if (filter.getClass().isAnnotationPresent(Entity.class))
 			excludeInvalidFields(filter);
@@ -115,10 +119,15 @@ public class Example {
 			}
 			
 			QueryField qf = f.getAnnotation(QueryField.class);
-			if(value.toString().isEmpty() && (qf == null || !qf.isEmptyValid())) {
+			boolean defaultQueryValue = !isDefaultQueryValue(f);
+			if(value.toString().isEmpty() && (qf == null || !qf.isEmptyValid()) && !defaultQueryValue) {
 				prepareAndExclude(f);
 			}
 		}
+	}
+
+	private boolean isDefaultQueryValue(Field f) {
+		return f.isAnnotationPresent(DefaultBooleanQueryValue.class);
 	}
 
 	private boolean isExcluded(Field f) {
@@ -156,6 +165,11 @@ public class Example {
 			sb.deleteCharAt(sb.length()-1);
 			layer = sb.toString();
 		}
+	}
+	
+	public void addRestrictions(String restrictions, Map<String, Object> params) {
+		extraRestrictions = restrictions;
+		params.putAll(params);
 	}
 	
 	private void layerDown(String layerName) {

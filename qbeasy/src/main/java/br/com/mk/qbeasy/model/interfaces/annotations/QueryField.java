@@ -15,4 +15,5 @@ public @interface QueryField {
 	
 	boolean isNullValid() default false;
 	boolean isEmptyValid() default false;
+
 }
