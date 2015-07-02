@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import br.com.mk.qbeasy.model.enumerated.JoinType;
 import br.com.mk.qbeasy.model.enumerated.MatchingMode;
+import br.com.mk.qbeasy.model.enumerated.QueryConjuction;
 import br.com.mk.qbeasy.model.interfaces.annotations.DefaultBooleanQueryValue;
 import br.com.mk.qbeasy.model.interfaces.annotations.QueryField;
 import br.com.mk.qbeasy.util.ReflectionUtil;
@@ -30,6 +31,7 @@ public class Example {
 	MatchingMode generalMatchingMode;
 	JoinType generalJoinType;
 	boolean generalIgnoreCase;
+	QueryConjuction generalQueryConjunction;
 	String layer;
 	boolean printHql;
 	String extraRestrictions;
@@ -43,6 +45,7 @@ public class Example {
 		this.ignoreCase4Field = new HashMap<String, Boolean>();
 		this.generalMatchingMode = MatchingMode.EXACT;
 		this.generalIgnoreCase = true; 
+		generalQueryConjunction = QueryConjuction.AND;
 		this.filter = filter;
 		this.fields = ReflectionUtil.getAllFields(filter.getClass());
 		this.params = new HashMap<String, Object>();
@@ -186,5 +189,13 @@ public class Example {
 
 	public void setParams(Map<String, Object> params) {
 		this.params = params;
+	}
+
+	public QueryConjuction getGeneralQueryConjunction() {
+		return generalQueryConjunction;
+	}
+
+	public void setGeneralQueryConjunction(QueryConjuction generalQueryConjunction) {
+		this.generalQueryConjunction = generalQueryConjunction;
 	}
 }

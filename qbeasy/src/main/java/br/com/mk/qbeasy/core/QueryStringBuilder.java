@@ -150,9 +150,9 @@ public class QueryStringBuilder {
 		}
 	}
 
-private boolean isDefaultQueryValue(Field f, Object fieldValue) {
-	return fieldValue == null && f.isAnnotationPresent(DefaultBooleanQueryValue.class);
-}
+	private boolean isDefaultQueryValue(Field f, Object fieldValue) {
+		return fieldValue == null && f.isAnnotationPresent(DefaultBooleanQueryValue.class);
+	}
 
 	private List<Field> getOrdered(List<Field> fields) {
 		List<Field> ordered = new ArrayList<Field>();
@@ -275,7 +275,7 @@ private boolean isDefaultQueryValue(Field f, Object fieldValue) {
 		if (qf != null) {
 			qc = qf.conjuction();
 		} else {
-			qc = QueryConjuction.AND;
+			qc = ex.generalQueryConjunction;
 		}
 		
 		whereBuilder.append(qc);
