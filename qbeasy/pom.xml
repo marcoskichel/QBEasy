@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.boilerplatecorp</groupId>
 	<artifactId>qbeasy</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<name>QBEasy</name>
 	<description>Uncomplicated Query By Example Framework</description>
 

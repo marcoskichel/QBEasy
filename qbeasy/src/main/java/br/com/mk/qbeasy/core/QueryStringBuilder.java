@@ -27,6 +27,7 @@ import br.com.mk.qbeasy.util.ReflectionUtil;
  *
  */
 public class QueryStringBuilder {
+	
 	protected StringBuilder selectBuilder;
 	protected StringBuilder fromBuilder;
 	protected StringBuilder whereBuilder;
@@ -48,11 +49,6 @@ public class QueryStringBuilder {
 	protected String getQueryString() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		countQuery = false;
 		return build();
-	}
-	
-	protected String getQueryString(String additionalDefinitions) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		countQuery = false;
-		return build(additionalDefinitions);
 	}
 	
 	public static QuerySimpleModel getQueryStringByFieldName(String fieldName, Object fieldValue, Class<?> clazz) {
@@ -102,16 +98,15 @@ public class QueryStringBuilder {
 			throw new QBEasyException(e);
 		}
 		
-		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString() + ex.extraRestrictions;
+		String queryString = selectBuilder.toString() + fromBuilder.toString() + whereBuilder.toString() + ex.extraRestrictions + getOrderBy();
 		if(ex.printHql) 
 			System.out.println(queryString);
 		
 		return queryString;
 	}
 	
-	private String build(String additionalDefinitions) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		String queryString = build() + additionalDefinitions;
-		return queryString;
+	private String getOrderBy() {
+		return ex.orderBy != null && !ex.orderBy.isEmpty() ? " order by entity_1." + ex.orderBy : "";
 	}
 	
 	private void resetBuilders() {
@@ -218,10 +213,13 @@ public class QueryStringBuilder {
 			restrict(bean, fieldValue, f.getName(), operationType);
 	
 		} else {
-			join(f, fieldValue, bean);
-			layerDown(f.getName());
-			iterateOverClass(fieldValue.getClass(), fieldValue);
-			layerUp();
+			String fieldJoinName = queryLayer + "." + f.getName();
+			if (ex.joinAll || ex.joins.containsKey(fieldJoinName) && ex.joins.get(fieldJoinName)) {
+				join(f, fieldValue, bean);
+				layerDown(f.getName());
+				iterateOverClass(fieldValue.getClass(), fieldValue);
+				layerUp();
+			}
 		}
 	}
 
@@ -360,10 +358,12 @@ public class QueryStringBuilder {
 		String alias = decideAlias(field);
 		aliasMap.put(fieldValue, alias);
 		
+		String fieldName = field.getName();
+
 		fromBuilder.append(JoinType.INNER);
 		fromBuilder.append(aliasMap.get(bean));
 		fromBuilder.append('.');
-		fromBuilder.append(field.getName());
+		fromBuilder.append(fieldName);
 		fromBuilder.append(" as ");
 		fromBuilder.append(alias);
 	}

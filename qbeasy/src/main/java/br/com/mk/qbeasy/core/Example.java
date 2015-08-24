@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import br.com.mk.qbeasy.model.enumerated.JoinType;
 import br.com.mk.qbeasy.model.enumerated.MatchingMode;
 import br.com.mk.qbeasy.model.enumerated.QueryConjuction;
 import br.com.mk.qbeasy.model.interfaces.annotations.DefaultBooleanQueryValue;
@@ -23,25 +22,32 @@ public class Example {
 	
 	final HashSet<String> excludeFields;
 	final Object filter;
-	final HashMap<String, MatchingMode> matching4Field;
-	final HashMap<String, Boolean> ignoreCase4Field;
-	final HashMap<String, JoinType> joinType4Field;
-	final List<Field> fields;
-	private Map<String, Object> params;
+	
 	MatchingMode generalMatchingMode;
-	JoinType generalJoinType;
+	final HashMap<String, MatchingMode> matching4Field;
+
 	boolean generalIgnoreCase;
+	final HashMap<String, Boolean> ignoreCase4Field;
+
+	Boolean joinAll;
+	final HashMap<String, Boolean> joins;
+
 	QueryConjuction generalQueryConjunction;
+	
+	private Map<String, Object> params;
+	final List<Field> fields;
+	
+	String orderBy, groupBy;
+
 	String layer;
 	boolean printHql;
 	String extraRestrictions;
-	
 	
 	public Example(Object filter) throws IllegalArgumentException, IllegalAccessException {
 		super();
 		this.excludeFields = new HashSet<String>();
 		this.matching4Field = new HashMap<String, MatchingMode>();
-		this.joinType4Field = new HashMap<String, JoinType>();
+		this.joins = new HashMap<String, Boolean>();
 		this.ignoreCase4Field = new HashMap<String, Boolean>();
 		this.generalMatchingMode = MatchingMode.EXACT;
 		this.generalIgnoreCase = true; 
@@ -197,5 +203,33 @@ public class Example {
 
 	public void setGeneralQueryConjunction(QueryConjuction generalQueryConjunction) {
 		this.generalQueryConjunction = generalQueryConjunction;
+	}
+
+	public Boolean getJoinAll() {
+		return joinAll;
+	}
+
+	public void setJoinAll(Boolean joinAll) {
+		this.joinAll = joinAll;
+	}
+
+	public HashMap<String, Boolean> getJoins() {
+		return joins;
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void orderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+
+	public String getGroupBy() {
+		return groupBy;
+	}
+
+	public void groupBy(String groupBy) {
+		this.groupBy = groupBy;
 	}
 }

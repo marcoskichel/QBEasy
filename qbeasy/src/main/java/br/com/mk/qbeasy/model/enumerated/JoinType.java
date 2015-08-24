@@ -1,7 +1,7 @@
 package br.com.mk.qbeasy.model.enumerated;
 
 public enum JoinType {
-	INNER(" join "), LEFT(" left join "), RIGHT(" right join ");
+	INNER(" join fetch "), LEFT(" left join fetch "), RIGHT(" right join fetch ");
 	
 	private final String value;
 

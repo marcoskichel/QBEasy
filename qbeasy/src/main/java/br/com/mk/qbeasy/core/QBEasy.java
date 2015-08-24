@@ -84,7 +84,8 @@ public class QBEasy {
 		}
 	
 		setParameters(q, exemplo.getParams());
-		return q.getResultList();
+		List<T> result = q.getResultList();
+		return result;
 	}
 	
 	/**

@@ -25,6 +25,7 @@ public interface ExampleGenerator extends Serializable {
 				e.ignoreCase(true);
 				e.setMatchingMode(MatchingMode.ANYWHERE);
 				e.excludeZeroes();
+				e.setJoinAll(true);
 				return e;
 			} catch (Exception e) {
 				throw new QBEasyException(e);
